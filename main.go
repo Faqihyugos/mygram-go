@@ -23,7 +23,7 @@ var (
 func main() {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s  dbname=%s sslmode=disable", host_db, port_db, user_db, pass_db, name_db)
 	db, err := gorm.Open(postgres.Open(psqlInfo), &gorm.Config{})
-
+	db.Debug().AutoMigrate(&user.User{})
 	if err != nil {
 		log.Fatal(err.Error())
 	}
