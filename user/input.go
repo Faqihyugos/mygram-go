@@ -2,7 +2,12 @@ package user
 
 type RegisterUserInput struct {
 	Age      uint   `json:"age" binding:"required"`
-	Email    string `json:"email" binding:"required,email" validate:"unique"`
-	Password string `json:"password" binding:"required"`
-	Username string `json:"username" binding:"required" validate:"unique"`
+	Email    string `json:"email" binding:"required,email"`
+	Password string `json:"password" binding:"required,min=6"`
+	Username string `json:"username" binding:"required"`
+}
+
+type LoginInput struct {
+	Email    string `json:"email" form:"email" binding:"required,email"`
+	Password string `json:"password" form:"password" binding:"required"`
 }
