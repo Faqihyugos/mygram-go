@@ -3,12 +3,13 @@ package main
 import (
 	"fmt"
 	"log"
-	"mygram/auth"
-	"mygram/handler"
-	"mygram/helper"
-	"mygram/user"
 	"net/http"
 	"strings"
+
+	"github.com/Faqihyugos/mygram-go/auth"
+	"github.com/Faqihyugos/mygram-go/handler"
+	"github.com/Faqihyugos/mygram-go/helper"
+	"github.com/Faqihyugos/mygram-go/user"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"

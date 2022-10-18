@@ -1,4 +1,4 @@
-module mygram
+module github.com/Faqihyugos/mygram-go
 
 go 1.19
 

@@ -1,11 +1,12 @@
 package handler
 
 import (
-	"mygram/auth"
-	"mygram/helper"
-	"mygram/user"
 	"net/http"
 	"strconv"
+
+	"github.com/Faqihyugos/mygram-go/auth"
+	"github.com/Faqihyugos/mygram-go/helper"
+	"github.com/Faqihyugos/mygram-go/user"
 
 	"github.com/gin-gonic/gin"
 )
