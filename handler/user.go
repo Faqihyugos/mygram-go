@@ -89,17 +89,8 @@ func (h *userHandler) UpdateUser(c *gin.Context) {
 	//mapping input dari user ke input struct
 	//input struct passing ke service
 
-	var inputID user.GetUserDetailInput
-
-	err := c.ShouldBindUri(&inputID)
-	if err != nil {
-		response := helper.ApiResponse("Failed to update user", http.StatusBadRequest, "error", nil)
-		c.JSON(http.StatusBadRequest, response)
-		return
-	}
-
 	var inputData user.UpdateUserInput
-	err = c.ShouldBindJSON(&inputData)
+	err := c.ShouldBindJSON(&inputData)
 	if err != nil {
 		errors := helper.FormatValidationError(err)
 		errorMessage := gin.H{"errors": errors}
@@ -109,10 +100,14 @@ func (h *userHandler) UpdateUser(c *gin.Context) {
 		return
 	}
 
+	//get current user and id user
+	idString := c.Param("id")
+	id, _ := strconv.Atoi(idString)
+
 	currentUser := c.MustGet("currentUser").(user.User)
 	inputData.User = currentUser
 
-	updatedUser, err := h.userService.UpdateUser(inputID, inputData)
+	updatedUser, err := h.userService.UpdateUser(id, inputData)
 	if err != nil {
 		response := helper.ApiResponse("Failed to update user", http.StatusBadRequest, "error", nil)
 		c.JSON(http.StatusBadRequest, response)

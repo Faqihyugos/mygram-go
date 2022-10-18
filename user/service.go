@@ -9,7 +9,7 @@ import (
 type Service interface {
 	RegisterUser(input RegisterUserInput) (User, error)
 	Login(input LoginInput) (User, error)
-	UpdateUser(inputID GetUserDetailInput, inputData UpdateUserInput) (User, error)
+	UpdateUser(ID int, inputData UpdateUserInput) (User, error)
 	GetUserByID(ID int) (User, error)
 	DeleteUser(ID int) (User, error)
 }
@@ -67,8 +67,8 @@ func (s *service) Login(input LoginInput) (User, error) {
 	return user, nil
 }
 
-func (s *service) UpdateUser(inputID GetUserDetailInput, inputData UpdateUserInput) (User, error) {
-	user, err := s.repository.FindByID(inputID.ID)
+func (s *service) UpdateUser(ID int, inputData UpdateUserInput) (User, error) {
+	user, err := s.repository.FindByID(ID)
 	if err != nil {
 		return user, err
 	}
