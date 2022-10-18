@@ -11,3 +11,15 @@ type LoginInput struct {
 	Email    string `json:"email" form:"email" binding:"required,email"`
 	Password string `json:"password" form:"password" binding:"required"`
 }
+
+type UpdateUserInput struct {
+	ID       int
+	Username string `json:"username" binding:"required"`
+	Email    string `json:"email" binding:"required,email"`
+	Error    error
+	User     User
+}
+
+type GetUserDetailInput struct {
+	ID int `uri:"id" binding:"required"`
+}

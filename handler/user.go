@@ -87,3 +87,45 @@ func (h *userHandler) Login(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 
 }
+
+func (h *userHandler) UpdateUser(c *gin.Context) {
+	//user membutuhkan token
+	//user membutuhkan data input
+	//handler membutuhkan service
+	//mapping input dari user ke input struct
+	//input struct passing ke service
+
+	var inputID user.GetUserDetailInput
+
+	err := c.ShouldBindUri(&inputID)
+	if err != nil {
+		response := helper.ApiResponse("Failed to update user", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	var inputData user.UpdateUserInput
+	err = c.ShouldBindJSON(&inputData)
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+		errorMessage := gin.H{"errors": errors}
+
+		response := helper.ApiResponse("Failed to update user", http.StatusUnprocessableEntity, "error", errorMessage)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
+	currentUser := c.MustGet("currentUser").(user.User)
+	inputData.User = currentUser
+
+	updatedUser, err := h.userService.UpdateUser(inputID, inputData)
+	if err != nil {
+		response := helper.ApiResponse("Failed to update user", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	formatter := user.FormatUpdaeUser(updatedUser)
+	response := helper.ApiResponse("Success to update user", http.StatusOK, "success", formatter)
+	c.JSON(http.StatusOK, response)
+}
