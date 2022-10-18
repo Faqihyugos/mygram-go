@@ -1,6 +1,10 @@
 package user
 
-import "gorm.io/gorm"
+import (
+	"errors"
+
+	"gorm.io/gorm"
+)
 
 type Repository interface {
 	Save(user User) (User, error)
@@ -8,6 +12,7 @@ type Repository interface {
 	FindByID(ID int) (User, error)
 	Update(user User) (User, error)
 	Delete(user User) (User, error)
+	IsEmailExist(email string) error
 }
 
 type repository struct {
@@ -64,4 +69,18 @@ func (r *repository) Delete(user User) (User, error) {
 		return user, err
 	}
 	return user, nil
+}
+
+func (r *repository) IsEmailExist(email string) error {
+	user := new(User)
+	err := r.db.Where("email = ?", email).First(&user).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil
+		}
+
+		return err
+	}
+
+	return errors.New("email already exists")
 }

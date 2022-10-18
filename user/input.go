@@ -20,6 +20,13 @@ type UpdateUserInput struct {
 	User     User
 }
 
-type GetUserDetailInput struct {
-	ID int `uri:"id" binding:"required"`
-}
+// func isEmailExist(repo repository) *validator.ValidationErrors {
+// 	return func(value interface{}) error {
+// 		email, ok := value.(string)
+// 		if !ok {
+// 			return errors.New("invalid email address")
+// 		}
+
+// 		return repo.IsEmailExist(email)
+// 	}
+// }
