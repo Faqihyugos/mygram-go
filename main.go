@@ -9,6 +9,7 @@ import (
 	"github.com/Faqihyugos/mygram-go/auth"
 	"github.com/Faqihyugos/mygram-go/handler"
 	"github.com/Faqihyugos/mygram-go/helper"
+	"github.com/Faqihyugos/mygram-go/photo"
 	"github.com/Faqihyugos/mygram-go/user"
 
 	"github.com/gin-gonic/gin"
@@ -28,7 +29,9 @@ var (
 func main() {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s  dbname=%s sslmode=disable", host_db, port_db, user_db, pass_db, name_db)
 	db, err := gorm.Open(postgres.Open(psqlInfo), &gorm.Config{})
-	db.Debug().AutoMigrate(&user.User{})
+
+	db.Debug().AutoMigrate(&user.User{}, &photo.Photo{})
+
 	if err != nil {
 		log.Fatal(err.Error())
 	}
@@ -38,11 +41,18 @@ func main() {
 	authService := auth.NewService()
 	userHandler := handler.NewUserHandler(userService, authService)
 
+	photoRepository := photo.NewRepository(db)
+	photoService := photo.NewService(photoRepository)
+	photoHandler := handler.NewPhotoHandler(photoService, authService)
+
 	router := gin.Default()
 	router.POST("users/register", userHandler.RegisterUser)
 	router.POST("users/login", userHandler.Login)
 	router.PUT("/users/:id", authMiddleware(authService, userService), userHandler.UpdateUser)
 	router.DELETE("/users/:id", authMiddleware(authService, userService), userHandler.DeleteUser)
+
+	// photo
+	router.POST("photos", authMiddleware(authService, userService), photoHandler.CreatePhoto)
 
 	router.Run()
 
