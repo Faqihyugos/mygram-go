@@ -5,6 +5,7 @@ import (
 	"mygram/helper"
 	"mygram/user"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -38,14 +39,7 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 		return
 	}
 
-	token, err := h.authService.GenerateToken(newUser.ID)
-	if err != nil {
-		response := helper.ApiResponse("Register account failed", http.StatusBadRequest, "error", nil)
-		c.JSON(http.StatusBadRequest, response)
-		return
-	}
-
-	formatter := user.FormatUser(newUser, token)
+	formatter := user.FormatUser(newUser)
 
 	response := helper.ApiResponse("Account has been register", http.StatusOK, "succes", formatter)
 	c.JSON(http.StatusOK, response)
@@ -81,7 +75,7 @@ func (h *userHandler) Login(c *gin.Context) {
 		return
 	}
 
-	formatter := user.FormatLogin(loginUser, token)
+	formatter := user.FormatLogin(token)
 
 	response := helper.ApiResponse("Login success", http.StatusOK, "succes", formatter)
 	c.JSON(http.StatusOK, response)
@@ -125,7 +119,22 @@ func (h *userHandler) UpdateUser(c *gin.Context) {
 		return
 	}
 
-	formatter := user.FormatUpdaeUser(updatedUser)
+	formatter := user.FormatUpdateUser(updatedUser)
 	response := helper.ApiResponse("Success to update user", http.StatusOK, "success", formatter)
+	c.JSON(http.StatusOK, response)
+}
+
+func (h *userHandler) DeleteUser(c *gin.Context) {
+	idString := c.Param("id")
+	id, _ := strconv.Atoi(idString)
+
+	_, err := h.userService.DeleteUser(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"errors": err,
+		})
+		return
+	}
+	response := helper.ApiResponse("Your account has been succefully deleted", http.StatusOK, "success", nil)
 	c.JSON(http.StatusOK, response)
 }

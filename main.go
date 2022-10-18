@@ -41,6 +41,7 @@ func main() {
 	router.POST("users/register", userHandler.RegisterUser)
 	router.POST("users/login", userHandler.Login)
 	router.PUT("/users/:id", authMiddleware(authService, userService), userHandler.UpdateUser)
+	router.DELETE("/users/:id", authMiddleware(authService, userService), userHandler.DeleteUser)
 
 	router.Run()
 

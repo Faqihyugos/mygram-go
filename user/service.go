@@ -11,6 +11,7 @@ type Service interface {
 	Login(input LoginInput) (User, error)
 	UpdateUser(inputID GetUserDetailInput, inputData UpdateUserInput) (User, error)
 	GetUserByID(ID int) (User, error)
+	DeleteUser(ID int) (User, error)
 }
 
 type service struct {
@@ -98,4 +99,16 @@ func (s *service) GetUserByID(ID int) (User, error) {
 	}
 
 	return user, nil
+}
+
+func (s *service) DeleteUser(ID int) (User, error) {
+	user, err := s.repository.FindByID(ID)
+	if err != nil {
+		return user, err
+	}
+	deleteUser, errfound := s.repository.Delete(user)
+	if errfound != nil {
+		return deleteUser, errfound
+	}
+	return deleteUser, nil
 }
