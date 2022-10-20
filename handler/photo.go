@@ -6,6 +6,7 @@ import (
 	"github.com/Faqihyugos/mygram-go/auth"
 	"github.com/Faqihyugos/mygram-go/helper"
 	"github.com/Faqihyugos/mygram-go/photo"
+	"github.com/Faqihyugos/mygram-go/user"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,6 +20,8 @@ func NewPhotoHandler(photoService photo.Service, authService auth.Service) *phot
 }
 
 func (h *photoHandler) CreatePhoto(c *gin.Context) {
+	currentUser := c.MustGet("currentUser").(user.User)
+	userID := int(currentUser.ID)
 	var input photo.SavePhotoInput
 
 	err := c.ShouldBindJSON(&input)
@@ -31,7 +34,7 @@ func (h *photoHandler) CreatePhoto(c *gin.Context) {
 		return
 	}
 
-	newPhoto, err := h.photoService.SavePhoto(input)
+	newPhoto, err := h.photoService.SavePhoto(userID, input)
 	if err != nil {
 		response := helper.ApiResponse("Photo failed", http.StatusBadRequest, "error", nil)
 		c.JSON(http.StatusBadRequest, response)
