@@ -5,9 +5,9 @@ import "gorm.io/gorm"
 type Repository interface {
 	Save(photo Photo) (Photo, error)
 	FindAll() ([]Photo, error)
+	Update(photo Photo) (Photo, error)
 	// FindByEmail(email string) (Photo, error)
-	// FindByID(ID int) (Photo, error)
-	// Update(photo Photo) (Photo, error)
+	FindByID(ID int) (Photo, error)
 	// Delete(photo Photo) (Photo, error)
 }
 
@@ -34,4 +34,21 @@ func (r *repository) FindAll() ([]Photo, error) {
 		return photos, err
 	}
 	return photos, nil
+}
+
+func (r *repository) Update(photo Photo) (Photo, error) {
+	err := r.db.Save(&photo).Error
+	if err != nil {
+		return photo, err
+	}
+	return photo, nil
+}
+
+func (r *repository) FindByID(ID int) (Photo, error) {
+	var photo Photo
+	err := r.db.Preload("User").Where("id = ?", ID).Find(&photo).Error
+	if err != nil {
+		return photo, err
+	}
+	return photo, nil
 }

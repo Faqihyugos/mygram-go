@@ -29,6 +29,15 @@ type UserPhotoFormatter struct {
 	Username string `json:"username"`
 }
 
+type PhotoUpdateFormatter struct {
+	ID        int       `json:"id"`
+	Title     string    `json:"title"`
+	Caption   string    `json:"caption"`
+	PhotoUrl  string    `json:"photo_url"`
+	UserID    int       `json:"user_id"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
 func FormatPhotoCreate(photo Photo) PhotoFormatterCreate {
 	formatter := PhotoFormatterCreate{
 		ID:       photo.ID,
@@ -68,4 +77,16 @@ func FormatPhotos(photos []Photo) []PhotoFormatter {
 	}
 
 	return photoFormatter
+}
+
+func FormatPhotoUpdate(photo Photo) PhotoUpdateFormatter {
+	formatter := PhotoUpdateFormatter{
+		ID:        photo.ID,
+		Title:     photo.Title,
+		Caption:   photo.Caption,
+		UserID:    photo.UserID,
+		PhotoUrl:  photo.PhotoUrl,
+		UpdatedAt: photo.UpdatedAt,
+	}
+	return formatter
 }

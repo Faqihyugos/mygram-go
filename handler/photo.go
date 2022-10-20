@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/Faqihyugos/mygram-go/auth"
 	"github.com/Faqihyugos/mygram-go/helper"
@@ -22,7 +23,7 @@ func NewPhotoHandler(photoService photo.Service, authService auth.Service) *phot
 func (h *photoHandler) CreatePhoto(c *gin.Context) {
 	currentUser := c.MustGet("currentUser").(user.User)
 	userID := int(currentUser.ID)
-	var input photo.SavePhotoInput
+	var input photo.PhotoInput
 
 	err := c.ShouldBindJSON(&input)
 	if err != nil {
@@ -56,5 +57,37 @@ func (h *photoHandler) GetAllPhoto(c *gin.Context) {
 
 	formatter := photo.FormatPhotos(photos)
 	response := helper.ApiResponse("List of photos", http.StatusOK, "succes", formatter)
+	c.JSON(http.StatusOK, response)
+}
+
+func (h *photoHandler) UpdatePhoto(c *gin.Context) {
+	var input photo.UpdatePhotoInput
+	err := c.ShouldBindJSON(&input)
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+		errorMessage := gin.H{"errors": errors}
+
+		response := helper.ApiResponse("Photo failed", http.StatusUnprocessableEntity, "error", errorMessage)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
+	//get  id photo
+	idString := c.Param("photoId")
+	id, _ := strconv.Atoi(idString)
+
+	//get current user
+	currentUser := c.MustGet("currentUser").(user.User)
+	input.User = currentUser
+
+	updatedPhoto, err := h.photoService.UpdatePhoto(id, input)
+
+	if err != nil {
+		response := helper.ApiResponse("Failed to update photo", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+	formatter := photo.FormatPhotoUpdate(updatedPhoto)
+	response := helper.ApiResponse("Success to update user", http.StatusOK, "success", formatter)
 	c.JSON(http.StatusOK, response)
 }

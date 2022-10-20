@@ -1,12 +1,11 @@
 package main
 
 import (
-	"fmt"
-	"log"
 	"net/http"
 	"strings"
 
 	"github.com/Faqihyugos/mygram-go/auth"
+	"github.com/Faqihyugos/mygram-go/config"
 	"github.com/Faqihyugos/mygram-go/handler"
 	"github.com/Faqihyugos/mygram-go/helper"
 	"github.com/Faqihyugos/mygram-go/photo"
@@ -14,28 +13,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
-)
-
-var (
-	host_db = "localhost"
-	port_db = 5432
-	user_db = "postgres"
-	name_db = "mygram"
-	pass_db = "postgres"
 )
 
 func main() {
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s  dbname=%s sslmode=disable", host_db, port_db, user_db, pass_db, name_db)
-	db, err := gorm.Open(postgres.Open(psqlInfo), &gorm.Config{})
-
-	db.Debug().AutoMigrate(&user.User{}, &photo.Photo{})
-
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-
+	db := config.StartDB()
 	userRepository := user.NewRepository(db)
 	userService := user.NewService(userRepository)
 	authService := auth.NewService()
@@ -59,6 +40,7 @@ func main() {
 	photoRouter.Use(authMiddleware(authService, userService))
 	photoRouter.POST("/", photoHandler.CreatePhoto)
 	photoRouter.GET("/", photoHandler.GetAllPhoto)
+	photoRouter.PUT("/:photoId", auth.PhotoAuthorization(), photoHandler.UpdatePhoto)
 
 	router.Run()
 

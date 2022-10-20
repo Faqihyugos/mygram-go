@@ -1,8 +1,11 @@
 package photo
 
+import "errors"
+
 type Service interface {
-	SavePhoto(id int, input SavePhotoInput) (Photo, error)
+	SavePhoto(ID int, input PhotoInput) (Photo, error)
 	FindAllPhoto() ([]Photo, error)
+	UpdatePhoto(ID int, input UpdatePhotoInput) (Photo, error)
 }
 
 type service struct {
@@ -13,10 +16,10 @@ func NewService(repository Repository) *service {
 	return &service{repository}
 }
 
-func (s *service) SavePhoto(id int, input SavePhotoInput) (Photo, error) {
+func (s *service) SavePhoto(ID int, input PhotoInput) (Photo, error) {
 	photo := Photo{}
 
-	photo.UserID = id
+	photo.UserID = ID
 	photo.Title = input.Title
 	photo.Caption = input.Caption
 	photo.PhotoUrl = input.PhotoUrl
@@ -35,4 +38,24 @@ func (s *service) FindAllPhoto() ([]Photo, error) {
 		return photos, err
 	}
 	return photos, nil
+}
+
+func (s *service) UpdatePhoto(ID int, input UpdatePhotoInput) (Photo, error) {
+	photo, err := s.repository.FindByID(ID)
+	if err != nil {
+		return photo, err
+	}
+
+	if photo.UserID != input.User.ID {
+		return photo, errors.New("Not an owner of the user")
+	}
+	photo.Title = input.Title
+	photo.Caption = input.Caption
+	photo.PhotoUrl = input.PhotoUrl
+
+	updatedPhoto, err := s.repository.Update(photo)
+	if err != nil {
+		return updatedPhoto, err
+	}
+	return updatedPhoto, nil
 }
