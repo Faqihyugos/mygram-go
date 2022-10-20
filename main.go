@@ -46,14 +46,19 @@ func main() {
 	photoHandler := handler.NewPhotoHandler(photoService, authService)
 
 	router := gin.Default()
-	router.POST("users/register", userHandler.RegisterUser)
-	router.POST("users/login", userHandler.Login)
-	router.PUT("/users/:id", authMiddleware(authService, userService), userHandler.UpdateUser)
-	router.DELETE("/users/:id", authMiddleware(authService, userService), userHandler.DeleteUser)
+
+	// user
+	userRouter := router.Group("/users")
+	userRouter.POST("/register", userHandler.RegisterUser)
+	userRouter.POST("/login", userHandler.Login)
+	userRouter.PUT("/:id", authMiddleware(authService, userService), userHandler.UpdateUser)
+	userRouter.DELETE("/:id", authMiddleware(authService, userService), userHandler.DeleteUser)
 
 	// photo
-	router.POST("photos", authMiddleware(authService, userService), photoHandler.CreatePhoto)
-	router.GET("photos", authMiddleware(authService, userService), photoHandler.GetAllPhoto)
+	photoRouter := router.Group("/photos")
+	photoRouter.Use(authMiddleware(authService, userService))
+	photoRouter.POST("/", photoHandler.CreatePhoto)
+	photoRouter.GET("/", photoHandler.GetAllPhoto)
 
 	router.Run()
 
