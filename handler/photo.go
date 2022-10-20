@@ -43,5 +43,5 @@ func (h *photoHandler) CreatePhoto(c *gin.Context) {
 
 	formatter := photo.FormatPhoto(newPhoto)
 	response := helper.ApiResponse("Photo has been save", http.StatusCreated, "succes", formatter)
-	c.JSON(http.StatusOK, response)
+	c.JSON(http.StatusCreated, response)
 }

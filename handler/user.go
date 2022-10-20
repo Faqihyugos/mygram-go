@@ -43,7 +43,7 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 	formatter := user.FormatUser(newUser)
 
 	response := helper.ApiResponse("Account has been register", http.StatusCreated, "succes", formatter)
-	c.JSON(http.StatusOK, response)
+	c.JSON(http.StatusCreated, response)
 }
 
 func (h *userHandler) Login(c *gin.Context) {
