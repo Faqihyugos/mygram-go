@@ -6,6 +6,7 @@ type Service interface {
 	SavePhoto(ID int, input PhotoInput) (Photo, error)
 	FindAllPhoto() ([]Photo, error)
 	UpdatePhoto(ID int, input UpdatePhotoInput) (Photo, error)
+	DeletePhoto(ID int) (Photo, error)
 }
 
 type service struct {
@@ -58,4 +59,21 @@ func (s *service) UpdatePhoto(ID int, input UpdatePhotoInput) (Photo, error) {
 		return updatedPhoto, err
 	}
 	return updatedPhoto, nil
+}
+
+func (s *service) DeletePhoto(ID int) (Photo, error) {
+	photo, err := s.repository.FindByID(ID)
+	if err != nil {
+		return photo, err
+	}
+
+	if photo.ID == 0 {
+		return photo, errors.New("No photo found on with that ID")
+	}
+
+	deletedPhoto, err := s.repository.Delete(photo)
+	if err != nil {
+		return deletedPhoto, err
+	}
+	return deletedPhoto, nil
 }

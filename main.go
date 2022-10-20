@@ -36,6 +36,7 @@ func main() {
 	photoRouter.POST("/", photoHandler.CreatePhoto)
 	photoRouter.GET("/", photoHandler.GetAllPhoto)
 	photoRouter.PUT("/:photoId", auth.PhotoAuthorization(), photoHandler.UpdatePhoto)
+	photoRouter.DELETE("/:photoId", auth.PhotoAuthorization(), photoHandler.DeletePhoto)
 
 	router.Run()
 

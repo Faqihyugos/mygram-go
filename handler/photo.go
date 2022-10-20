@@ -91,3 +91,17 @@ func (h *photoHandler) UpdatePhoto(c *gin.Context) {
 	response := helper.ApiResponse("Success to update user", http.StatusOK, "success", formatter)
 	c.JSON(http.StatusOK, response)
 }
+
+func (h *photoHandler) DeletePhoto(c *gin.Context) {
+	idString := c.Param("photoId")
+	id, _ := strconv.Atoi(idString)
+
+	_, err := h.photoService.DeletePhoto(id)
+	if err != nil {
+		response := helper.ApiResponse("Failed to delete photo", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+	response := helper.ApiResponse("Success to delete photo", http.StatusOK, "success", nil)
+	c.JSON(http.StatusOK, response)
+}
