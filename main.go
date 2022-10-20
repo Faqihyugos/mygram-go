@@ -53,6 +53,7 @@ func main() {
 
 	// photo
 	router.POST("photos", authMiddleware(authService, userService), photoHandler.CreatePhoto)
+	router.GET("photos", authMiddleware(authService, userService), photoHandler.GetAllPhoto)
 
 	router.Run()
 

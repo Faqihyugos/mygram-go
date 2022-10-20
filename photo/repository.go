@@ -4,6 +4,7 @@ import "gorm.io/gorm"
 
 type Repository interface {
 	Save(photo Photo) (Photo, error)
+	FindAll() ([]Photo, error)
 	// FindByEmail(email string) (Photo, error)
 	// FindByID(ID int) (Photo, error)
 	// Update(photo Photo) (Photo, error)
@@ -24,4 +25,13 @@ func (r *repository) Save(photo Photo) (Photo, error) {
 		return photo, err
 	}
 	return photo, nil
+}
+
+func (r *repository) FindAll() ([]Photo, error) {
+	var photos []Photo
+	err := r.db.Preload("User").Order("id asc").Find(&photos).Error
+	if err != nil {
+		return photos, err
+	}
+	return photos, nil
 }

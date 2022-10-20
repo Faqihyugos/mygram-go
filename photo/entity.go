@@ -2,6 +2,8 @@ package photo
 
 import (
 	"time"
+
+	"github.com/Faqihyugos/mygram-go/user"
 )
 
 type Photo struct {
@@ -12,4 +14,5 @@ type Photo struct {
 	UserID    int       `gorm:"foreignKey:user_id"`
 	CreatedAt time.Time `gorm:"column:created_at"`
 	UpdatedAt time.Time `gorm:"column:updated_at"`
+	User      user.User
 }
