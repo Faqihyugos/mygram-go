@@ -46,6 +46,8 @@ func main() {
 	commentRouter := router.Group("/comments")
 	commentRouter.Use(auth.Authentication(userService))
 	commentRouter.POST("/", commentHandler.CreateComment)
+	commentRouter.GET("/", commentHandler.GetAllComment)
+	commentRouter.PUT("/:commentId", auth.CommentAuthorization(), commentHandler.UpdateComment)
 
 	router.Run()
 

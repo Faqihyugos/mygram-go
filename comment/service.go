@@ -1,7 +1,11 @@
 package comment
 
+import "errors"
+
 type Service interface {
 	SaveComment(ID int, input CommentInput) (Comment, error)
+	FindAllComment() ([]Comment, error)
+	UpdateComment(ID int, input UpdateCommentInput) (Comment, error)
 }
 
 type service struct {
@@ -24,4 +28,33 @@ func (s *service) SaveComment(ID int, input CommentInput) (Comment, error) {
 		return newComment, err
 	}
 	return newComment, nil
+}
+
+func (s *service) FindAllComment() ([]Comment, error) {
+	comments, err := s.repository.FindAll()
+	if err != nil {
+		return comments, err
+	}
+
+	return comments, nil
+}
+
+func (s *service) UpdateComment(ID int, input UpdateCommentInput) (Comment, error) {
+	comment, err := s.repository.FindByID(ID)
+	if err != nil {
+		return comment, err
+	}
+
+	if comment.UserID != input.User.ID {
+		return comment, errors.New("Not an owner of the user")
+	}
+
+	comment.Message = input.Message
+
+	updatedComment, err := s.repository.Update(comment)
+	if err != nil {
+		return updatedComment, err
+	}
+
+	return updatedComment, nil
 }
