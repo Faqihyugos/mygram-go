@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/Faqihyugos/mygram-go/auth"
+	"github.com/Faqihyugos/mygram-go/comment"
 	"github.com/Faqihyugos/mygram-go/config"
 	"github.com/Faqihyugos/mygram-go/handler"
 	"github.com/Faqihyugos/mygram-go/photo"
@@ -21,6 +22,10 @@ func main() {
 	photoService := photo.NewService(photoRepository)
 	photoHandler := handler.NewPhotoHandler(photoService, authService)
 
+	commentRepository := comment.NewRepository(db)
+	commentService := comment.NewService(commentRepository)
+	commentHandler := handler.NewCommentHandler(commentService, authService)
+
 	router := gin.Default()
 
 	// user
@@ -37,6 +42,10 @@ func main() {
 	photoRouter.GET("/", photoHandler.GetAllPhoto)
 	photoRouter.PUT("/:photoId", auth.PhotoAuthorization(), photoHandler.UpdatePhoto)
 	photoRouter.DELETE("/:photoId", auth.PhotoAuthorization(), photoHandler.DeletePhoto)
+
+	commentRouter := router.Group("/comments")
+	commentRouter.Use(auth.Authentication(userService))
+	commentRouter.POST("/", commentHandler.CreateComment)
 
 	router.Run()
 
