@@ -6,6 +6,7 @@ type Service interface {
 	SaveComment(ID int, input CommentInput) (Comment, error)
 	FindAllComment() ([]Comment, error)
 	UpdateComment(ID int, input UpdateCommentInput) (Comment, error)
+	DeleteComment(ID int, input UpdateCommentInput) (Comment, error)
 }
 
 type service struct {
@@ -57,4 +58,22 @@ func (s *service) UpdateComment(ID int, input UpdateCommentInput) (Comment, erro
 	}
 
 	return updatedComment, nil
+}
+
+func (s *service) DeleteComment(ID int, input UpdateCommentInput) (Comment, error) {
+	comment, err := s.repository.FindByID(ID)
+	if err != nil {
+		return comment, err
+	}
+
+	if comment.UserID != input.User.ID {
+		return comment, errors.New("No comment found on with that ID")
+	}
+
+	deletedComment, err := s.repository.Delete(comment)
+	if err != nil {
+		return deletedComment, err
+	}
+
+	return deletedComment, nil
 }

@@ -7,6 +7,7 @@ type Repository interface {
 	FindAll() ([]Comment, error)
 	Update(comment Comment) (Comment, error)
 	FindByID(ID int) (Comment, error)
+	Delete(comment Comment) (Comment, error)
 }
 
 type repository struct {
@@ -45,6 +46,14 @@ func (r *repository) Update(comment Comment) (Comment, error) {
 func (r *repository) FindByID(ID int) (Comment, error) {
 	var comment Comment
 	err := r.db.Preload("User").Preload("Photo").Where("id = ?", ID).Find(&comment).Error
+	if err != nil {
+		return comment, err
+	}
+	return comment, nil
+}
+
+func (r *repository) Delete(comment Comment) (Comment, error) {
+	err := r.db.Delete(&comment).Error
 	if err != nil {
 		return comment, err
 	}

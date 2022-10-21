@@ -48,6 +48,7 @@ func main() {
 	commentRouter.POST("/", commentHandler.CreateComment)
 	commentRouter.GET("/", commentHandler.GetAllComment)
 	commentRouter.PUT("/:commentId", auth.CommentAuthorization(), commentHandler.UpdateComment)
+	commentRouter.DELETE("/:commentId", auth.CommentAuthorization(), commentHandler.DeleteComment)
 
 	router.Run()
 

@@ -78,3 +78,28 @@ func (h *commentHandler) UpdateComment(c *gin.Context) {
 	response := comment.FormatCommentUpdate(updatedComment)
 	c.JSON(http.StatusOK, response)
 }
+
+func (h *commentHandler) DeleteComment(c *gin.Context) {
+	var input comment.UpdateCommentInput
+	err := c.ShouldBindJSON(&input)
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+		errorMessage := gin.H{"errors": errors}
+		c.JSON(http.StatusUnprocessableEntity, errorMessage)
+		return
+	}
+	// get id comment
+	id, _ := strconv.Atoi(c.Param("commentId"))
+
+	// get current user
+	currentUser := c.MustGet("currentUser").(user.User)
+	input.User = currentUser
+
+	_, errMessage := h.commentService.DeleteComment(id, input)
+
+	if errMessage != nil {
+		c.JSON(http.StatusBadRequest, "Failed to delete comment")
+		return
+	}
+	c.JSON(http.StatusOK, "Your comment has been successfully deleted")
+}
