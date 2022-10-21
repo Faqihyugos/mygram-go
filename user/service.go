@@ -38,6 +38,7 @@ func (s *service) RegisterUser(input RegisterUserInput) (User, error) {
 	// menginput password yg sudah menjadi string ke struct entity user
 	user.Password = string(passwordHash)
 
+	// menyimpan data user ke database
 	// memanggil repo save
 	NewUser, err := s.repository.Save(user)
 	if err != nil {

@@ -19,14 +19,3 @@ type UpdateUserInput struct {
 	Error    error
 	User     User
 }
-
-// func isEmailExist(repo repository) *validator.ValidationErrors {
-// 	return func(value interface{}) error {
-// 		email, ok := value.(string)
-// 		if !ok {
-// 			return errors.New("invalid email address")
-// 		}
-
-// 		return repo.IsEmailExist(email)
-// 	}
-// }

@@ -8,9 +8,9 @@ import (
 
 type Photo struct {
 	ID        int       `gorm:"primaryKey;column:id"`
-	Title     string    `gorm:"column:title"`
+	Title     string    `gorm:"not null;column:title"`
 	Caption   string    `gorm:"column:caption"`
-	PhotoUrl  string    `gorm:"column:photo_url"`
+	PhotoUrl  string    `gorm:"not null;column:photo_url"`
 	UserID    int       `gorm:"foreignKey:user_id"`
 	CreatedAt time.Time `gorm:"column:created_at"`
 	UpdatedAt time.Time `gorm:"column:updated_at"`
