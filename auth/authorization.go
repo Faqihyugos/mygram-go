@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/Faqihyugos/mygram-go/comment"
 	"github.com/Faqihyugos/mygram-go/config"
 	"github.com/Faqihyugos/mygram-go/helper"
 	"github.com/Faqihyugos/mygram-go/photo"
@@ -32,6 +33,36 @@ func PhotoAuthorization() gin.HandlerFunc {
 		}
 
 		if photo.UserID != userID {
+			response := helper.ApiResponse("You are not allowed to access this data", http.StatusUnauthorized, "Unauthorized", nil)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+			return
+		}
+
+		c.Next()
+	}
+}
+
+func CommentAuthorization() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		db := config.StartDB()
+		commentId, err := strconv.Atoi(c.Param("commentId"))
+		if err != nil {
+			response := helper.ApiResponse("Invalid parameter", http.StatusBadRequest, "Bad Request", nil)
+			c.JSON(http.StatusBadRequest, response)
+			return
+		}
+		currentUser := c.MustGet("currentUser").(user.User)
+		userID := int(currentUser.ID)
+		comment := comment.Comment{}
+
+		err = db.Select("user_id").First(&comment, int(commentId)).Error
+		if err != nil {
+			response := helper.ApiResponse("Data doesn't exist", http.StatusNotFound, "Data Not Found", nil)
+			c.JSON(http.StatusBadRequest, response)
+			return
+		}
+
+		if comment.UserID != userID {
 			response := helper.ApiResponse("You are not allowed to access this data", http.StatusUnauthorized, "Unauthorized", nil)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
 			return
