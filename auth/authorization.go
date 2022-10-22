@@ -7,6 +7,7 @@ import (
 	"github.com/Faqihyugos/mygram-go/comment"
 	"github.com/Faqihyugos/mygram-go/config"
 	"github.com/Faqihyugos/mygram-go/photo"
+	"github.com/Faqihyugos/mygram-go/sosmed"
 	"github.com/Faqihyugos/mygram-go/user"
 	"github.com/gin-gonic/gin"
 )
@@ -71,6 +72,40 @@ func CommentAuthorization() gin.HandlerFunc {
 		}
 
 		if comment.UserID != userID {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+				"error":   "Unauthorized",
+				"message": "You are not allowed to access this data",
+			})
+			return
+		}
+
+		c.Next()
+	}
+}
+func SocialMediaAuthorization() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		db := config.StartDB()
+		socialMediaId, err := strconv.Atoi(c.Param("socialMediaId"))
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+				"error":   "Bad Request",
+				"message": "Invalid parameter",
+			})
+		}
+		currentUser := c.MustGet("currentUser").(user.User)
+		userID := int(currentUser.ID)
+		social := sosmed.Sosmed{}
+
+		err = db.Select("user_id").First(&social, int(socialMediaId)).Error
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{
+				"error":   "Data Not Found",
+				"message": "Data doesn't exist",
+			})
+			return
+		}
+
+		if social.UserID != userID {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 				"error":   "Unauthorized",
 				"message": "You are not allowed to access this data",

@@ -59,8 +59,8 @@ func FormatSosmed(sosmed Sosmed) SosmedFormatter {
 	return formatter
 }
 
-func FormatSocialMedias(sosmed []Sosmed) []SosmedFormatter {
-	if len(sosmed) == 0 {
+func FormatSocialMedias(socials []Sosmed) []SosmedFormatter {
+	if len(socials) == 0 {
 		return []SosmedFormatter{}
 	}
 

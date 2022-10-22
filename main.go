@@ -59,8 +59,8 @@ func main() {
 	socialMediaRouter.Use(auth.Authentication(userService))
 	socialMediaRouter.POST("/", sosmedHandler.CreateSosmed)
 	socialMediaRouter.GET("/", sosmedHandler.GetAllSosmed)
-	socialMediaRouter.PUT("/:socialMediaId")
-	socialMediaRouter.DELETE("/:socialMediaId")
+	socialMediaRouter.PUT("/:socialMediaId", auth.SocialMediaAuthorization(), sosmedHandler.UpdateSosmed)
+	socialMediaRouter.DELETE("/:socialMediaId", auth.SocialMediaAuthorization(), sosmedHandler.DeleteSosmed)
 
 	router.Run()
 
