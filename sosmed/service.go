@@ -45,7 +45,7 @@ func (s *service) UpdateSosmed(ID int, input SosmedInput) (Sosmed, error) {
 	}
 
 	sosmed.Name = input.Name
-	sosmed.SocialMediaUrl = input.Name
+	sosmed.SocialMediaUrl = input.SociallMediaUrl
 
 	updateSosmed, err := s.repository.Update(sosmed)
 	if err != nil {

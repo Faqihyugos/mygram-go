@@ -13,5 +13,5 @@ type Sosmed struct {
 	UserID         int       `grom:"foreignKey:user_id"`
 	CreatedAt      time.Time `gorm:"column:created_at"`
 	UpdatedAt      time.Time `grom:"column:updated_at"`
-	User           user.User
+	User           user.User `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
