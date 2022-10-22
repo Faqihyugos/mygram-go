@@ -6,6 +6,7 @@ import (
 	"github.com/Faqihyugos/mygram-go/config"
 	"github.com/Faqihyugos/mygram-go/handler"
 	"github.com/Faqihyugos/mygram-go/photo"
+	"github.com/Faqihyugos/mygram-go/sosmed"
 	"github.com/Faqihyugos/mygram-go/user"
 
 	"github.com/gin-gonic/gin"
@@ -25,6 +26,10 @@ func main() {
 	commentRepository := comment.NewRepository(db)
 	commentService := comment.NewService(commentRepository)
 	commentHandler := handler.NewCommentHandler(commentService, authService)
+
+	sosmedRepository := sosmed.NewRepository(db)
+	sosmedService := sosmed.NewService(sosmedRepository)
+	sosmedHandler := handler.NewSosmedHandler(sosmedService, authService)
 
 	router := gin.Default()
 
@@ -49,6 +54,10 @@ func main() {
 	commentRouter.GET("/", commentHandler.GetAllComment)
 	commentRouter.PUT("/:commentId", auth.CommentAuthorization(), commentHandler.UpdateComment)
 	commentRouter.DELETE("/:commentId", auth.CommentAuthorization(), commentHandler.DeleteComment)
+
+	socialMediaRouter := router.Group("/socialmedias")
+	socialMediaRouter.Use(auth.Authentication(userService))
+	socialMediaRouter.POST("/", sosmedHandler.CreateSosmed)
 
 	router.Run()
 

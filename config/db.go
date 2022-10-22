@@ -6,6 +6,7 @@ import (
 
 	"github.com/Faqihyugos/mygram-go/comment"
 	"github.com/Faqihyugos/mygram-go/photo"
+	"github.com/Faqihyugos/mygram-go/sosmed"
 	"github.com/Faqihyugos/mygram-go/user"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -23,7 +24,7 @@ func StartDB() *gorm.DB {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s  dbname=%s sslmode=disable", host_db, port_db, user_db, pass_db, name_db)
 	db, err := gorm.Open(postgres.Open(psqlInfo), &gorm.Config{})
 
-	db.Debug().AutoMigrate(&user.User{}, &photo.Photo{}, &comment.Comment{})
+	db.Debug().AutoMigrate(&user.User{}, &photo.Photo{}, &comment.Comment{}, &sosmed.Sosmed{})
 
 	if err != nil {
 		log.Fatal(err.Error())
