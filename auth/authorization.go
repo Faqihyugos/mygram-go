@@ -6,7 +6,6 @@ import (
 
 	"github.com/Faqihyugos/mygram-go/comment"
 	"github.com/Faqihyugos/mygram-go/config"
-	"github.com/Faqihyugos/mygram-go/helper"
 	"github.com/Faqihyugos/mygram-go/photo"
 	"github.com/Faqihyugos/mygram-go/user"
 	"github.com/gin-gonic/gin"
@@ -17,8 +16,10 @@ func PhotoAuthorization() gin.HandlerFunc {
 		db := config.StartDB()
 		photoId, err := strconv.Atoi(c.Param("photoId"))
 		if err != nil {
-			response := helper.ApiResponse("Invalid parameter", http.StatusBadRequest, "Bad Request", nil)
-			c.JSON(http.StatusBadRequest, response)
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+				"error":   "Bad Request",
+				"message": "Invalid parameter",
+			})
 			return
 		}
 		currentUser := c.MustGet("currentUser").(user.User)
@@ -27,14 +28,18 @@ func PhotoAuthorization() gin.HandlerFunc {
 
 		err = db.Select("user_id").First(&photo, int(photoId)).Error
 		if err != nil {
-			response := helper.ApiResponse("Data doesn't exist", http.StatusNotFound, "Data Not Found", nil)
-			c.JSON(http.StatusBadRequest, response)
+			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{
+				"error":   "Data Not Found",
+				"message": "Data doesn't exist",
+			})
 			return
 		}
 
 		if photo.UserID != userID {
-			response := helper.ApiResponse("You are not allowed to access this data", http.StatusUnauthorized, "Unauthorized", nil)
-			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+				"error":   "Unauthorized",
+				"message": "You are not allowed to access this data",
+			})
 			return
 		}
 
@@ -47,9 +52,10 @@ func CommentAuthorization() gin.HandlerFunc {
 		db := config.StartDB()
 		commentId, err := strconv.Atoi(c.Param("commentId"))
 		if err != nil {
-			response := helper.ApiResponse("Invalid parameter", http.StatusBadRequest, "Bad Request", nil)
-			c.JSON(http.StatusBadRequest, response)
-			return
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+				"error":   "Bad Request",
+				"message": "Invalid parameter",
+			})
 		}
 		currentUser := c.MustGet("currentUser").(user.User)
 		userID := int(currentUser.ID)
@@ -57,14 +63,18 @@ func CommentAuthorization() gin.HandlerFunc {
 
 		err = db.Select("user_id").First(&comment, int(commentId)).Error
 		if err != nil {
-			response := helper.ApiResponse("Data doesn't exist", http.StatusNotFound, "Data Not Found", nil)
-			c.JSON(http.StatusBadRequest, response)
+			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{
+				"error":   "Data Not Found",
+				"message": "Data doesn't exist",
+			})
 			return
 		}
 
 		if comment.UserID != userID {
-			response := helper.ApiResponse("You are not allowed to access this data", http.StatusUnauthorized, "Unauthorized", nil)
-			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+				"error":   "Unauthorized",
+				"message": "You are not allowed to access this data",
+			})
 			return
 		}
 
