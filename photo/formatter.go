@@ -2,6 +2,8 @@ package photo
 
 import (
 	"time"
+
+	"github.com/Faqihyugos/mygram-go/user"
 )
 
 type PhotoFormatterCreate struct {
@@ -14,19 +16,14 @@ type PhotoFormatterCreate struct {
 }
 
 type PhotoFormatter struct {
-	ID        int                `json:"id"`
-	Title     string             `json:"title"`
-	Caption   string             `json:"caption"`
-	PhotoUrl  string             `json:"photo_url"`
-	UserID    int                `json:"user_id"`
-	CreatedAt time.Time          `json:"created_at"`
-	UpdatedAt time.Time          `json:"updated_at"`
-	User      UserPhotoFormatter `json:"user"`
-}
-
-type UserPhotoFormatter struct {
-	Email    string `json:"email"`
-	Username string `json:"username"`
+	ID        int                     `json:"id"`
+	Title     string                  `json:"title"`
+	Caption   string                  `json:"caption"`
+	PhotoUrl  string                  `json:"photo_url"`
+	UserID    int                     `json:"user_id"`
+	CreatedAt time.Time               `json:"created_at"`
+	UpdatedAt time.Time               `json:"updated_at"`
+	User      user.UserPhotoFormatter `json:"user"`
 }
 
 type PhotoUpdateFormatter struct {
@@ -36,6 +33,14 @@ type PhotoUpdateFormatter struct {
 	PhotoUrl  string    `json:"photo_url"`
 	UserID    int       `json:"user_id"`
 	UpdatedAt time.Time `json:"updated_at"`
+}
+
+type PhotoCommentFormatter struct {
+	ID       int    `json:"id"`
+	Title    string `json:"title"`
+	Caption  string `json:"caption"`
+	PhotoUrl string `json:"photo_url"`
+	UserID   int    `json:"user_id"`
 }
 
 func FormatPhotoCreate(photo Photo) PhotoFormatterCreate {
@@ -58,7 +63,7 @@ func FormatPhoto(photo Photo) PhotoFormatter {
 		PhotoUrl:  photo.PhotoUrl,
 		CreatedAt: photo.CreatedAt,
 		UpdatedAt: photo.UpdatedAt,
-		User: UserPhotoFormatter{
+		User: user.UserPhotoFormatter{
 			Email:    photo.User.Email,
 			Username: photo.User.Username,
 		},

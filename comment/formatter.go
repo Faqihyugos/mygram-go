@@ -1,6 +1,11 @@
 package comment
 
-import "time"
+import (
+	"time"
+
+	"github.com/Faqihyugos/mygram-go/photo"
+	"github.com/Faqihyugos/mygram-go/user"
+)
 
 type CommentFormatterCreate struct {
 	ID        int       `json:"id"`
@@ -11,28 +16,14 @@ type CommentFormatterCreate struct {
 }
 
 type CommentFormatter struct {
-	ID        int                   `json:"id"`
-	Message   string                `json:"message"`
-	PhotoID   int                   `json:"photo_id"`
-	UserID    int                   `json:"user_id"`
-	CreatedAt time.Time             `json:"created_at"`
-	UpdatedAt time.Time             `json:"updated_at"`
-	User      UserCommentFormatter  `json:"user"`
-	Photo     PhotoCommentFormatter `json:"photo"`
-}
-
-type UserCommentFormatter struct {
-	ID       int    `json:"id"`
-	Email    string `json:"email"`
-	Username string `json:"username"`
-}
-
-type PhotoCommentFormatter struct {
-	ID       int    `json:"id"`
-	Title    string `json:"title"`
-	Caption  string `json:"caption"`
-	PhotoUrl string `json:"photo_url"`
-	UserID   int    `json:"user_id"`
+	ID        int                         `json:"id"`
+	Message   string                      `json:"message"`
+	PhotoID   int                         `json:"photo_id"`
+	UserID    int                         `json:"user_id"`
+	CreatedAt time.Time                   `json:"created_at"`
+	UpdatedAt time.Time                   `json:"updated_at"`
+	User      user.UserCommentFormatter   `json:"user"`
+	Photo     photo.PhotoCommentFormatter `json:"photo"`
 }
 
 type CommentFormatterUpdate struct {
@@ -62,12 +53,12 @@ func FormatComment(comment Comment) CommentFormatter {
 		UserID:    comment.UserID,
 		CreatedAt: comment.CreatedAt,
 		UpdatedAt: comment.UpdatedAt,
-		User: UserCommentFormatter{
+		User: user.UserCommentFormatter{
 			ID:       comment.User.ID,
 			Email:    comment.User.Email,
 			Username: comment.User.Username,
 		},
-		Photo: PhotoCommentFormatter{
+		Photo: photo.PhotoCommentFormatter{
 			ID:       comment.Photo.ID,
 			Title:    comment.Photo.Title,
 			Caption:  comment.Photo.Caption,

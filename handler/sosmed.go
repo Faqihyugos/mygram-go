@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/Faqihyugos/mygram-go/auth"
 	"github.com/Faqihyugos/mygram-go/helper"
@@ -39,4 +40,52 @@ func (h *sosmedHandler) CreateSosmed(c *gin.Context) {
 
 	formatter := sosmed.FormatSosmedSave(newSosmed)
 	c.JSON(http.StatusCreated, formatter)
+}
+
+func (h *sosmedHandler) GetAllSosmed(c *gin.Context) {
+	socialmedias, err := h.sosmedService.FindAllSosmed()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	formatter := sosmed.FormatSocialMedias(socialmedias)
+	c.JSON(http.StatusOK, formatter)
+}
+
+func (h *sosmedHandler) UpdateSosmed(c *gin.Context) {
+	var input sosmed.SosmedInput
+	err := c.ShouldBindJSON(&input)
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+		errorMessage := gin.H{"errors": errors}
+		c.JSON(http.StatusUnprocessableEntity, errorMessage)
+		return
+	}
+
+	id, _ := strconv.Atoi(c.Param("socialMediaId"))
+	// get current user
+	currentUser := c.MustGet("currentUser").(user.User)
+	input.User = currentUser
+
+	updateSosmed, err := h.sosmedService.UpdateSosmed(id, input)
+	if err != nil {
+		c.JSON(http.StatusUnprocessableEntity, gin.H{
+			"error":   "Failed to update sosmed",
+			"message": err.Error(),
+		})
+		return
+	}
+	response := sosmed.FormatSosmedUpdate(updateSosmed)
+	c.JSON(http.StatusOK, response)
+}
+
+func (h *sosmedHandler) DeleteSosmed(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("socialMediaId"))
+	// get current user
+	_, errMessage := h.sosmedService.DeleteSosmed(id)
+	if errMessage != nil {
+		c.JSON(http.StatusBadRequest, "Failed to delete social media")
+		return
+	}
+	c.JSON(http.StatusOK, "Your social media has been successfully deleted")
 }

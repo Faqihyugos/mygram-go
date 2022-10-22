@@ -21,6 +21,17 @@ type UserUpdateFormatter struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
+type UserPhotoFormatter struct {
+	Email    string `json:"email"`
+	Username string `json:"username"`
+}
+
+type UserCommentFormatter struct {
+	ID       int    `json:"id"`
+	Email    string `json:"email"`
+	Username string `json:"username"`
+}
+
 func FormatLogin(token string) UserLoginFormatter {
 	formatterLogin := UserLoginFormatter{
 		Token: token,
