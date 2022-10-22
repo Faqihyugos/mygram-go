@@ -28,14 +28,20 @@ func (h *sosmedHandler) CreateSosmed(c *gin.Context) {
 	err := c.ShouldBindJSON(&input)
 	if err != nil {
 		errors := helper.FormatValidationError(err)
-		errorMessage := gin.H{"errors": errors}
-		c.JSON(http.StatusUnprocessableEntity, errorMessage)
+		c.JSON(http.StatusUnprocessableEntity, gin.H{
+			"error":   "Register account failed",
+			"message": errors,
+		})
 		return
 	}
 
 	newSosmed, err := h.sosmedService.SaveSosmed(userID, input)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, "Sosmed failed")
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Bad Request",
+			"message": err.Error(),
+		})
+		return
 	}
 
 	formatter := sosmed.FormatSosmedSave(newSosmed)
@@ -45,7 +51,11 @@ func (h *sosmedHandler) CreateSosmed(c *gin.Context) {
 func (h *sosmedHandler) GetAllSosmed(c *gin.Context) {
 	socialmedias, err := h.sosmedService.FindAllSosmed()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Bad Request",
+			"message": err.Error(),
+		})
+		return
 	}
 
 	formatter := sosmed.FormatSocialMedias(socialmedias)
@@ -57,8 +67,10 @@ func (h *sosmedHandler) UpdateSosmed(c *gin.Context) {
 	err := c.ShouldBindJSON(&input)
 	if err != nil {
 		errors := helper.FormatValidationError(err)
-		errorMessage := gin.H{"errors": errors}
-		c.JSON(http.StatusUnprocessableEntity, errorMessage)
+		c.JSON(http.StatusUnprocessableEntity, gin.H{
+			"error":   "Register account failed",
+			"message": errors,
+		})
 		return
 	}
 
@@ -87,5 +99,7 @@ func (h *sosmedHandler) DeleteSosmed(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, "Failed to delete social media")
 		return
 	}
-	c.JSON(http.StatusOK, "Your social media has been successfully deleted")
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Your social media has been successfully deleted",
+	})
 }

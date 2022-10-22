@@ -44,18 +44,20 @@ func FormatSosmedSave(sosmed Sosmed) SosmedFormatterSave {
 }
 
 func FormatSosmed(sosmed Sosmed) SosmedFormatter {
-	formatter := SosmedFormatter{}
-	formatter.ID = sosmed.ID
-	formatter.Name = sosmed.Name
-	formatter.SociallMediaUrl = sosmed.SocialMediaUrl
-	formatter.UserID = sosmed.UserID
-	formatter.CreatedAt = sosmed.CreatedAt
-	formatter.UpdatedAt = sosmed.UpdatedAt
-	formatter.User = user.UserCommentFormatter{
-		ID:       sosmed.UserID,
-		Email:    sosmed.User.Email,
-		Username: sosmed.User.Username,
+	formatter := SosmedFormatter{
+		ID:              sosmed.ID,
+		Name:            sosmed.Name,
+		SociallMediaUrl: sosmed.SocialMediaUrl,
+		UserID:          sosmed.UserID,
+		CreatedAt:       sosmed.CreatedAt,
+		UpdatedAt:       sosmed.UpdatedAt,
+		User: user.UserCommentFormatter{
+			ID:       sosmed.UserID,
+			Email:    sosmed.User.Email,
+			Username: sosmed.User.Username,
+		},
 	}
+
 	return formatter
 }
 
@@ -65,7 +67,7 @@ func FormatSocialMedias(socials []Sosmed) []SosmedFormatter {
 	}
 
 	var socialmediasFormatter []SosmedFormatter
-	for _, sosmed := range socialmediasFormatter {
+	for _, sosmed := range socials {
 		socialmediasFormatter = append(socialmediasFormatter, FormatSosmed(sosmed))
 	}
 

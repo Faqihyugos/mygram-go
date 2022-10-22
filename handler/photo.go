@@ -28,35 +28,37 @@ func (h *photoHandler) CreatePhoto(c *gin.Context) {
 	err := c.ShouldBindJSON(&input)
 	if err != nil {
 		errors := helper.FormatValidationError(err)
-		errorMessage := gin.H{"errors": errors}
-
-		response := helper.ApiResponse("Photo failed", http.StatusUnprocessableEntity, "error", errorMessage)
-		c.JSON(http.StatusUnprocessableEntity, response)
+		c.JSON(http.StatusUnprocessableEntity, gin.H{
+			"error":   "Save photo failed",
+			"message": errors,
+		})
 		return
 	}
 
 	newPhoto, err := h.photoService.SavePhoto(userID, input)
 	if err != nil {
-		response := helper.ApiResponse("Photo failed", http.StatusBadRequest, "error", nil)
-		c.JSON(http.StatusBadRequest, response)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Bad Request",
+			"message": err.Error(),
+		})
 		return
 	}
 
-	formatter := photo.FormatPhotoCreate(newPhoto)
-	response := helper.ApiResponse("Photo has been save", http.StatusCreated, "succes", formatter)
+	response := photo.FormatPhotoCreate(newPhoto)
 	c.JSON(http.StatusCreated, response)
 }
 
 func (h *photoHandler) GetAllPhoto(c *gin.Context) {
 	photos, err := h.photoService.FindAllPhoto()
 	if err != nil {
-		response := helper.ApiResponse("Photo failed", http.StatusBadRequest, "error", nil)
-		c.JSON(http.StatusBadRequest, response)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Bad Request",
+			"message": err.Error(),
+		})
 		return
 	}
 
-	formatter := photo.FormatPhotos(photos)
-	response := helper.ApiResponse("List of photos", http.StatusOK, "succes", formatter)
+	response := photo.FormatPhotos(photos)
 	c.JSON(http.StatusOK, response)
 }
 
@@ -65,10 +67,10 @@ func (h *photoHandler) UpdatePhoto(c *gin.Context) {
 	err := c.ShouldBindJSON(&input)
 	if err != nil {
 		errors := helper.FormatValidationError(err)
-		errorMessage := gin.H{"errors": errors}
-
-		response := helper.ApiResponse("Photo failed", http.StatusUnprocessableEntity, "error", errorMessage)
-		c.JSON(http.StatusUnprocessableEntity, response)
+		c.JSON(http.StatusUnprocessableEntity, gin.H{
+			"error":   "Failed to update photo",
+			"message": errors,
+		})
 		return
 	}
 
@@ -83,12 +85,13 @@ func (h *photoHandler) UpdatePhoto(c *gin.Context) {
 	updatedPhoto, err := h.photoService.UpdatePhoto(id, input)
 
 	if err != nil {
-		response := helper.ApiResponse("Failed to update photo", http.StatusBadRequest, "error", nil)
-		c.JSON(http.StatusBadRequest, response)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Bad Request",
+			"message": err.Error(),
+		})
 		return
 	}
-	formatter := photo.FormatPhotoUpdate(updatedPhoto)
-	response := helper.ApiResponse("Success to update user", http.StatusOK, "success", formatter)
+	response := photo.FormatPhotoUpdate(updatedPhoto)
 	c.JSON(http.StatusOK, response)
 }
 
@@ -107,10 +110,11 @@ func (h *photoHandler) DeletePhoto(c *gin.Context) {
 	input.User = currentUser
 
 	_, errMessage := h.photoService.DeletePhoto(id, input)
-
 	if errMessage != nil {
 		c.JSON(http.StatusBadRequest, "Failed to delete photo")
 		return
 	}
-	c.JSON(http.StatusOK, "Your photo has been successfully deleted")
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Your photo has been successfully deleted",
+	})
 }

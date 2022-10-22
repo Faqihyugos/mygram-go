@@ -28,14 +28,20 @@ func (h *commentHandler) CreateComment(c *gin.Context) {
 	err := c.ShouldBindJSON(&input)
 	if err != nil {
 		errors := helper.FormatValidationError(err)
-		errorMessage := gin.H{"errors": errors}
-		c.JSON(http.StatusUnprocessableEntity, errorMessage)
+		c.JSON(http.StatusUnprocessableEntity, gin.H{
+			"error":   "Create comment failed",
+			"message": errors,
+		})
 		return
 	}
 
 	newComment, err := h.commentService.SaveComment(userID, input)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Bad Request",
+			"message": err.Error(),
+		})
+		return
 	}
 
 	formatter := comment.FormatCommentCreate(newComment)
@@ -45,7 +51,11 @@ func (h *commentHandler) CreateComment(c *gin.Context) {
 func (h *commentHandler) GetAllComment(c *gin.Context) {
 	comments, err := h.commentService.FindAllComment()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Bad Request",
+			"message": err.Error(),
+		})
+		return
 	}
 
 	formatter := comment.FormatComments(comments)
@@ -72,7 +82,10 @@ func (h *commentHandler) UpdateComment(c *gin.Context) {
 	updatedComment, err := h.commentService.UpdateComment(id, input)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, "Failed to update comment")
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Failed to update comment",
+			"message": err.Error(),
+		})
 		return
 	}
 	response := comment.FormatCommentUpdate(updatedComment)
@@ -89,5 +102,5 @@ func (h *commentHandler) DeleteComment(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, "Failed to delete comment")
 		return
 	}
-	c.JSON(http.StatusOK, "Your comment has been successfully deleted")
+	c.JSON(http.StatusOK, gin.H{"message": "Your comment has been successfully deleted"})
 }
