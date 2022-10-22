@@ -26,22 +26,24 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 	err := c.ShouldBindJSON(&input)
 	if err != nil {
 		errors := helper.FormatValidationError(err)
-		errorMessage := gin.H{"errors": errors}
 
-		response := helper.ApiResponse("Register account failed", http.StatusUnprocessableEntity, "error", errorMessage)
-		c.JSON(http.StatusUnprocessableEntity, response)
+		c.JSON(http.StatusUnprocessableEntity, gin.H{
+			"error":   "Register account failed",
+			"message": errors,
+		})
 		return
 	}
 
 	newUser, err := h.userService.RegisterUser(input)
 	if err != nil {
-		response := helper.ApiResponse("Register account failed", http.StatusBadRequest, "error", nil)
-		c.JSON(http.StatusBadRequest, response)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Bad Request",
+			"message": err.Error(),
+		})
 		return
 	}
 
 	formatter := user.FormatUser(newUser)
-
 	// response := helper.ApiResponse("Account has been register", http.StatusCreated, "succes", formatter)
 	c.JSON(http.StatusCreated, formatter)
 }
@@ -54,31 +56,33 @@ func (h *userHandler) Login(c *gin.Context) {
 	if err != nil {
 		//cek validation
 		errors := helper.FormatValidationError(err)
-		errorMessage := gin.H{"errors": errors}
-
-		response := helper.ApiResponse("Login failed", http.StatusUnprocessableEntity, "error", errorMessage)
-		c.JSON(http.StatusUnprocessableEntity, response)
+		c.JSON(http.StatusUnprocessableEntity, gin.H{
+			"error":   "Login account failed",
+			"message": errors,
+		})
 		return
 	}
 
 	loginUser, err := h.userService.Login(input)
 	if err != nil {
-		errorMessage := gin.H{"errors": err.Error()}
-		response := helper.ApiResponse("Login failed", http.StatusUnprocessableEntity, "error", errorMessage)
-		c.JSON(http.StatusUnprocessableEntity, response)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Login Failed",
+			"message": err.Error(),
+		})
 		return
 	}
 
 	token, err := h.authService.GenerateToken(loginUser.ID)
 	if err != nil {
-		response := helper.ApiResponse("Login failed", http.StatusBadRequest, "error", nil)
-		c.JSON(http.StatusBadRequest, response)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Login Failed",
+			"message": err.Error(),
+		})
 		return
 	}
 
-	formatter := user.FormatLogin(token)
-
-	response := helper.ApiResponse("Login success", http.StatusOK, "succes", formatter)
+	// response := helper.ApiResponse("Login success", http.StatusOK, "succes", formatter)
+	response := user.FormatLogin(token)
 	c.JSON(http.StatusOK, response)
 
 }
@@ -94,10 +98,10 @@ func (h *userHandler) UpdateUser(c *gin.Context) {
 	err := c.ShouldBindJSON(&inputData)
 	if err != nil {
 		errors := helper.FormatValidationError(err)
-		errorMessage := gin.H{"errors": errors}
-
-		response := helper.ApiResponse("Failed to update user", http.StatusUnprocessableEntity, "error", errorMessage)
-		c.JSON(http.StatusUnprocessableEntity, response)
+		c.JSON(http.StatusUnprocessableEntity, gin.H{
+			"error":   "Failed to update user",
+			"message": errors,
+		})
 		return
 	}
 
@@ -110,13 +114,15 @@ func (h *userHandler) UpdateUser(c *gin.Context) {
 
 	updatedUser, err := h.userService.UpdateUser(id, inputData)
 	if err != nil {
-		response := helper.ApiResponse("Failed to update user", http.StatusBadRequest, "error", nil)
-		c.JSON(http.StatusBadRequest, response)
+		c.JSON(http.StatusUnprocessableEntity, gin.H{
+			"error":   "Failed to update user",
+			"message": err.Error(),
+		})
 		return
 	}
 
-	formatter := user.FormatUpdateUser(updatedUser)
-	response := helper.ApiResponse("Success to update user", http.StatusOK, "success", formatter)
+	// response := helper.ApiResponse("Success to update user", http.StatusOK, "success", formatter)
+	response := user.FormatUpdateUser(updatedUser)
 	c.JSON(http.StatusOK, response)
 }
 
@@ -131,6 +137,7 @@ func (h *userHandler) DeleteUser(c *gin.Context) {
 		})
 		return
 	}
-	response := helper.ApiResponse("Your account has been succefully deleted", http.StatusOK, "success", nil)
-	c.JSON(http.StatusOK, response)
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Your account has been succefully deleted",
+	})
 }
