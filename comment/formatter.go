@@ -32,7 +32,7 @@ type PhotoCommentFormatter struct {
 	Title    string `json:"title"`
 	Caption  string `json:"caption"`
 	PhotoUrl string `json:"photo_url"`
-	userID   int    `json:"user_id"`
+	UserID   int    `json:"user_id"`
 }
 
 type CommentFormatterUpdate struct {
@@ -72,7 +72,7 @@ func FormatComment(comment Comment) CommentFormatter {
 			Title:    comment.Photo.Title,
 			Caption:  comment.Photo.Caption,
 			PhotoUrl: comment.Photo.PhotoUrl,
-			userID:   comment.Photo.UserID,
+			UserID:   comment.Photo.UserID,
 		},
 	}
 	return formatter
