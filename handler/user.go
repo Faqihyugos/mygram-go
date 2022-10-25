@@ -2,7 +2,6 @@ package handler
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/Faqihyugos/mygram-go/auth"
 	"github.com/Faqihyugos/mygram-go/helper"
@@ -20,15 +19,25 @@ func NewUserHandler(userService user.Service, authService auth.Service) *userHan
 	return &userHandler{userService, authService}
 }
 
+// RegisterUser godoc
+// @Summary     Register User
+// @Description Register User
+// @Tags        Users
+// @Accept      json
+// @Produce     json
+// @Param		request body user.RegisterUserInput true "User Data"
+// @Success     201 {object} user.UserFormatter
+// @Failure     400 {object} helper.ApiError
+// @Failure     422 {object} helper.ApiError
+// @Router      /users/register [post]
 func (h *userHandler) RegisterUser(c *gin.Context) {
 	var input user.RegisterUserInput
 
 	err := c.ShouldBindJSON(&input)
 	if err != nil {
 		errors := helper.FormatValidationError(err)
-
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
-			"error":   "Register account failed",
+			"error":   "Failed to register user",
 			"message": errors,
 		})
 		return
@@ -36,18 +45,25 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 
 	newUser, err := h.userService.RegisterUser(input)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error":   "Bad Request",
-			"message": err.Error(),
-		})
+		helper.ApiResponseError(c, http.StatusBadRequest, "Failed to register user", err.Error())
 		return
 	}
 
-	formatter := user.FormatUser(newUser)
-	// response := helper.ApiResponse("Account has been register", http.StatusCreated, "succes", formatter)
-	c.JSON(http.StatusCreated, formatter)
+	response := user.FormatUser(newUser)
+	c.JSON(http.StatusCreated, response)
 }
 
+// LoginUser godoc
+// @Summary     Login User
+// @Description Login User
+// @Tags        Users
+// @Accept      json
+// @Produce     json
+// @Body		request body user.LoginInput true "User Data"
+// @Success     200 {object} user.UserLoginFormatter
+// @Failure     400 {object} helper.ApiError
+// @Failure     422 {object} helper.ApiError
+// @Router      /users/login [post]
 func (h *userHandler) Login(c *gin.Context) {
 
 	var input user.LoginInput
@@ -65,19 +81,13 @@ func (h *userHandler) Login(c *gin.Context) {
 
 	loginUser, err := h.userService.Login(input)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error":   "Login Failed",
-			"message": err.Error(),
-		})
+		helper.ApiResponseError(c, http.StatusBadRequest, "Login account failed", err.Error())
 		return
 	}
 
 	token, err := h.authService.GenerateToken(loginUser.ID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error":   "Login Failed",
-			"message": err.Error(),
-		})
+		helper.ApiResponseError(c, http.StatusBadRequest, "Login account failed", err.Error())
 		return
 	}
 
@@ -87,12 +97,18 @@ func (h *userHandler) Login(c *gin.Context) {
 
 }
 
+// UpdateUser godoc
+// @Summary     Update User
+// @Description Update User
+// @Tags        Users
+// @Accept      json
+// @Produce     json
+// @Body		request body user.UpdateUserInput true "User Data"
+// @Success     200 {object} user.UserUpdateFormatter
+// @Failure     400 {object} helper.ApiError
+// @Failure     422 {object} helper.ApiError
+// @Router      /users [put]
 func (h *userHandler) UpdateUser(c *gin.Context) {
-	//user membutuhkan token
-	//user membutuhkan data input
-	//handler membutuhkan service
-	//mapping input dari user ke input struct
-	//input struct passing ke service
 
 	var inputData user.UpdateUserInput
 	err := c.ShouldBindJSON(&inputData)
@@ -105,12 +121,9 @@ func (h *userHandler) UpdateUser(c *gin.Context) {
 		return
 	}
 
-	//get current user and id user
-	idString := c.Param("id")
-	id, _ := strconv.Atoi(idString)
-
 	currentUser := c.MustGet("currentUser").(user.User)
 	inputData.User = currentUser
+	id := int(currentUser.ID)
 
 	updatedUser, err := h.userService.UpdateUser(id, inputData)
 	if err != nil {
@@ -126,9 +139,18 @@ func (h *userHandler) UpdateUser(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
+// DeleteUser godoc
+// @Summary     Delete User
+// @Description Delete User
+// @Tags        Users
+// @Accept      json
+// @Produce     json
+// @Success     200 {object} nil
+// @Failure     400 {object} helper.ApiError
+// @Router      /users [delete]
 func (h *userHandler) DeleteUser(c *gin.Context) {
-	idString := c.Param("id")
-	id, _ := strconv.Atoi(idString)
+	currentUser := c.MustGet("currentUser").(user.User)
+	id := int(currentUser.ID)
 
 	_, err := h.userService.DeleteUser(id)
 	if err != nil {

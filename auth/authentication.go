@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/Faqihyugos/mygram-go/helper"
 	"github.com/Faqihyugos/mygram-go/user"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
@@ -17,8 +16,10 @@ func Authentication(userService user.Service) gin.HandlerFunc {
 		authHeader := c.GetHeader("Authorization")
 
 		if !strings.Contains(authHeader, "Bearer") {
-			response := helper.ApiResponse("Unauthorized/token baerer null", http.StatusUnauthorized, "error", nil)
-			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+				"error":   "Token Not Found",
+				"message": "Unauthenticated",
+			})
 			return
 		}
 
@@ -30,16 +31,20 @@ func Authentication(userService user.Service) gin.HandlerFunc {
 
 		token, err := authService.ValidateToken(tokenString)
 		if err != nil {
-			response := helper.ApiResponse("Unauthenticated", http.StatusUnauthorized, "error", nil)
-			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+				"error":   "Token Not Valid",
+				"message": "Unauthenticated",
+			})
 			return
 		}
 
 		claim, ok := token.Claims.(jwt.MapClaims)
 
 		if !ok || !token.Valid {
-			response := helper.ApiResponse("Unauthenticated", http.StatusUnauthorized, "error", nil)
-			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+				"error":   "Token Not Valid",
+				"message": "Unauthenticated",
+			})
 			return
 		}
 
@@ -47,8 +52,10 @@ func Authentication(userService user.Service) gin.HandlerFunc {
 
 		user, err := userService.GetUserByID(userID)
 		if err != nil {
-			response := helper.ApiResponse("Unauthenticated", http.StatusUnauthorized, "error", nil)
-			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+				"error":   "User Not Found",
+				"message": "Unauthenticated",
+			})
 			return
 		}
 

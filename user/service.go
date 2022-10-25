@@ -69,11 +69,12 @@ func (s *service) Login(input LoginInput) (User, error) {
 }
 
 func (s *service) UpdateUser(ID int, inputData UpdateUserInput) (User, error) {
-	user, err := s.repository.FindByID(ID)
+	user, err := s.GetUserByID(ID)
 	if err != nil {
 		return user, err
 	}
 
+	// Not an owner of the user
 	if user.ID != inputData.User.ID {
 		return user, errors.New("Not an owner of the user")
 	}
@@ -103,10 +104,11 @@ func (s *service) GetUserByID(ID int) (User, error) {
 }
 
 func (s *service) DeleteUser(ID int) (User, error) {
-	user, err := s.repository.FindByID(ID)
+	user, err := s.GetUserByID(ID)
 	if err != nil {
 		return user, err
 	}
+
 	deleteUser, errfound := s.repository.Delete(user)
 	if errfound != nil {
 		return deleteUser, errfound

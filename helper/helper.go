@@ -1,33 +1,22 @@
 package helper
 
 import (
+	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 )
 
-type Response struct {
-	Meta Meta        `json:"meta"`
-	Data interface{} `json:"data"`
-}
-
-type Meta struct {
+// ApiError
+type ApiError struct {
 	Message string `json:"message"`
-	Code    int    `json:"code"`
-	Status  string `json:"status"`
+	Error   string `json:"error"`
 }
 
-func ApiResponse(message string, code int, status string, data interface{}) Response {
-	meta := Meta{
-		Message: message,
-		Code:    code,
-		Status:  status,
-	}
-
-	jsonResponse := Response{
-		Meta: meta,
-		Data: data,
-	}
-
-	return jsonResponse
+// ApiResponseError json response
+func ApiResponseError(c *gin.Context, status int, message string, err interface{}) {
+	var apiError ApiError
+	apiError.Message = message
+	apiError.Error = err.(string)
+	c.JSON(status, apiError)
 }
 
 func FormatValidationError(err error) []string {
