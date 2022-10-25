@@ -96,20 +96,10 @@ func (h *photoHandler) UpdatePhoto(c *gin.Context) {
 }
 
 func (h *photoHandler) DeletePhoto(c *gin.Context) {
-	var input photo.UpdatePhotoInput
-	err := c.ShouldBindJSON(&input)
-	if err != nil {
-		errors := helper.FormatValidationError(err)
-		errorMessage := gin.H{"errors": errors}
-		c.JSON(http.StatusUnprocessableEntity, errorMessage)
-	}
 	idString := c.Param("photoId")
 	id, _ := strconv.Atoi(idString)
-	// get current user
-	currentUser := c.MustGet("currentUser").(user.User)
-	input.User = currentUser
 
-	_, errMessage := h.photoService.DeletePhoto(id, input)
+	_, errMessage := h.photoService.DeletePhoto(id)
 	if errMessage != nil {
 		c.JSON(http.StatusBadRequest, "Failed to delete photo")
 		return

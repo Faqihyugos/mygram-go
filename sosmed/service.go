@@ -5,6 +5,7 @@ type Service interface {
 	FindAllSosmed() ([]Sosmed, error)
 	UpdateSosmed(ID int, input SosmedInput) (Sosmed, error)
 	DeleteSosmed(ID int) (Sosmed, error)
+	FindSosmedByID(ID int) (Sosmed, error)
 }
 
 type service struct {
@@ -66,4 +67,12 @@ func (s *service) DeleteSosmed(ID int) (Sosmed, error) {
 		return deleteSosmed, err
 	}
 	return deleteSosmed, nil
+}
+
+func (s *service) FindSosmedByID(ID int) (Sosmed, error) {
+	sosmed, err := s.repository.FindByID(ID)
+	if err != nil {
+		return sosmed, err
+	}
+	return sosmed, nil
 }

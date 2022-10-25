@@ -62,7 +62,7 @@ func (s *service) Login(input LoginInput) (User, error) {
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 	if err != nil {
-		return user, err
+		return user, errors.New("Wrong password")
 	}
 
 	return user, nil
