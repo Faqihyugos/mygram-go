@@ -22,10 +22,10 @@ func NewUserHandler(userService user.Service, authService auth.Service) *userHan
 // RegisterUser godoc
 // @Summary     Register User
 // @Description Register User
-// @Tags        Users
+// @Tags        users
 // @Accept      json
 // @Produce     json
-// @Param		request body user.RegisterUserInput true "User Data"
+// @Param		data body user.RegisterUserInput true "User Data"
 // @Success     201 {object} user.UserFormatter
 // @Failure     400 {object} helper.ApiError
 // @Failure     422 {object} helper.ApiError

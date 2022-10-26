@@ -1,7 +1,7 @@
 package user
 
 type RegisterUserInput struct {
-	Age      uint   `json:"age" binding:"required"`
+	Age      uint   `json:"age" binding:"required,number"`
 	Email    string `json:"email" binding:"required,email"`
 	Password string `json:"password" binding:"required,min=6"`
 	Username string `json:"username" binding:"required"`

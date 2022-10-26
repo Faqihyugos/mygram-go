@@ -15,7 +15,6 @@
         },
         "version": "1.0"
     },
-    "host": "localhost:8080",
     "basePath": "/",
     "paths": {
         "/users": {
@@ -122,13 +121,13 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Users"
+                    "users"
                 ],
                 "summary": "Register User",
                 "parameters": [
                     {
                         "description": "User Data",
-                        "name": "request",
+                        "name": "data",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -239,6 +238,13 @@
                     "type": "string"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }

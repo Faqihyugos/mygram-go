@@ -7,8 +7,8 @@ import (
 
 // ApiError
 type ApiError struct {
-	Message string `json:"message"`
-	Error   string `json:"error"`
+	Message string `json:"message" example:"message"`
+	Error   string `json:"error" example:"error"`
 }
 
 // ApiResponseError json response

@@ -53,7 +53,6 @@ definitions:
       username:
         type: string
     type: object
-host: localhost:8080
 info:
   contact:
     email: faqihyugos@gmail.com
@@ -137,7 +136,7 @@ paths:
       parameters:
       - description: User Data
         in: body
-        name: request
+        name: data
         required: true
         schema:
           $ref: '#/definitions/user.RegisterUserInput'
@@ -158,5 +157,10 @@ paths:
             $ref: '#/definitions/helper.ApiError'
       summary: Register User
       tags:
-      - Users
+      - users
+securityDefinitions:
+  Bearer:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"
