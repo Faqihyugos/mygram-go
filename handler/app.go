@@ -45,22 +45,22 @@ func StartApp() {
 	photoRouter.Use(auth.Authentication(userService))
 	photoRouter.POST("/", photoHandler.CreatePhoto)
 	photoRouter.GET("/", photoHandler.GetAllPhoto)
-	photoRouter.PUT("/:photoId", auth.PhotoAuthorization(), photoHandler.UpdatePhoto)
-	photoRouter.DELETE("/:photoId", auth.PhotoAuthorization(), photoHandler.DeletePhoto)
+	photoRouter.PUT("/:id", auth.Authorization(), photoHandler.UpdatePhoto)
+	photoRouter.DELETE("/:id", auth.Authorization(), photoHandler.DeletePhoto)
 
 	commentRouter := router.Group("/comments")
 	commentRouter.Use(auth.Authentication(userService))
 	commentRouter.POST("/", commentHandler.CreateComment)
 	commentRouter.GET("/", commentHandler.GetAllComment)
-	commentRouter.PUT("/:commentId", auth.CommentAuthorization(), commentHandler.UpdateComment)
-	commentRouter.DELETE("/:commentId", auth.CommentAuthorization(), commentHandler.DeleteComment)
+	commentRouter.PUT("/:id", auth.Authorization(), commentHandler.UpdateComment)
+	commentRouter.DELETE("/:id", auth.Authorization(), commentHandler.DeleteComment)
 
 	socialMediaRouter := router.Group("/socialmedias")
 	socialMediaRouter.Use(auth.Authentication(userService))
 	socialMediaRouter.POST("/", sosmedHandler.CreateSosmed)
 	socialMediaRouter.GET("/", sosmedHandler.GetAllSosmed)
-	socialMediaRouter.PUT("/:socialMediaId", auth.SocialMediaAuthorization(), sosmedHandler.UpdateSosmed)
-	socialMediaRouter.DELETE("/:socialMediaId", auth.SocialMediaAuthorization(), sosmedHandler.DeleteSosmed)
+	socialMediaRouter.PUT("/:id", auth.Authorization(), sosmedHandler.UpdateSosmed)
+	socialMediaRouter.DELETE("/:id", auth.Authorization(), sosmedHandler.DeleteSosmed)
 
 	router.Run()
 }

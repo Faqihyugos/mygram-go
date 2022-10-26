@@ -75,7 +75,7 @@ func (h *photoHandler) UpdatePhoto(c *gin.Context) {
 	}
 
 	//get  id photo
-	idString := c.Param("photoId")
+	idString := c.Param("id")
 	id, _ := strconv.Atoi(idString)
 
 	//get current user
@@ -96,7 +96,7 @@ func (h *photoHandler) UpdatePhoto(c *gin.Context) {
 }
 
 func (h *photoHandler) DeletePhoto(c *gin.Context) {
-	idString := c.Param("photoId")
+	idString := c.Param("id")
 	id, _ := strconv.Atoi(idString)
 
 	_, errMessage := h.photoService.DeletePhoto(id)

@@ -7,7 +7,6 @@ type Service interface {
 	FindAllPhoto() ([]Photo, error)
 	UpdatePhoto(ID int, input UpdatePhotoInput) (Photo, error)
 	DeletePhoto(ID int) (Photo, error)
-	FindPhotoByID(ID int) (Photo, error)
 }
 
 type service struct {
@@ -73,12 +72,4 @@ func (s *service) DeletePhoto(ID int) (Photo, error) {
 		return deletedPhoto, err
 	}
 	return deletedPhoto, nil
-}
-
-func (s *service) FindPhotoByID(ID int) (Photo, error) {
-	photo, err := s.repository.FindByID(ID)
-	if err != nil {
-		return photo, err
-	}
-	return photo, nil
 }

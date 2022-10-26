@@ -29,7 +29,7 @@ func (h *sosmedHandler) CreateSosmed(c *gin.Context) {
 	if err != nil {
 		errors := helper.FormatValidationError(err)
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
-			"error":   "Register account failed",
+			"error":   "Create account social media failed",
 			"message": errors,
 		})
 		return
@@ -68,21 +68,21 @@ func (h *sosmedHandler) UpdateSosmed(c *gin.Context) {
 	if err != nil {
 		errors := helper.FormatValidationError(err)
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
-			"error":   "Register account failed",
+			"error":   "Failed to update social media",
 			"message": errors,
 		})
 		return
 	}
 
-	id, _ := strconv.Atoi(c.Param("socialMediaId"))
+	id, _ := strconv.Atoi(c.Param("id"))
 	// get current user
 	currentUser := c.MustGet("currentUser").(user.User)
 	input.User = currentUser
 
 	updateSosmed, err := h.sosmedService.UpdateSosmed(id, input)
 	if err != nil {
-		c.JSON(http.StatusUnprocessableEntity, gin.H{
-			"error":   "Failed to update sosmed",
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Failed to update social media",
 			"message": err.Error(),
 		})
 		return
@@ -92,7 +92,7 @@ func (h *sosmedHandler) UpdateSosmed(c *gin.Context) {
 }
 
 func (h *sosmedHandler) DeleteSosmed(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Param("socialMediaId"))
+	id, _ := strconv.Atoi(c.Param("id"))
 	// get current user
 	_, errMessage := h.sosmedService.DeleteSosmed(id)
 	if errMessage != nil {

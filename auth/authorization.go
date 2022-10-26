@@ -12,107 +12,88 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func PhotoAuthorization() gin.HandlerFunc {
+// create func Authoization middleware for 3 path photo, comment, and social media
+func Authorization() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		db := config.StartDB()
-		photoId, err := strconv.Atoi(c.Param("photoId"))
-		if err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-				"error":   "Bad Request",
-				"message": "Invalid parameter",
-			})
-			return
+		//get param dinamic from path
+		//example: /photos/1
+		//get 1 from path
+		id := c.Param("id")
+		//convert string to int
+		idInt, _ := strconv.Atoi(id)
+		//get user id from token
+		userID := c.MustGet("currentUser").(user.User).ID
+		//get path from request
+		path := c.Request.URL.Path
+		//check path
+		switch path {
+		case "/photos":
+			//get photo from db by id
+			photo := photo.Photo{}
+			err := db.Select("user_id").First(&photo, int(idInt)).Error
+			//check if error
+			if err != nil {
+				c.JSON(http.StatusNotFound, gin.H{
+					"error":   "Not Found",
+					"message": "Data doesn't exist",
+				})
+				c.Abort()
+				return
+			}
+			//check if user id not equal with user id from token
+			if photo.UserID != userID {
+				c.JSON(http.StatusForbidden, gin.H{
+					"error":   "Forbidden",
+					"message": "You are not allowed to access this resource",
+				})
+				c.Abort()
+				return
+			}
+		case "/comments":
+			//get comment by id
+			comment := comment.Comment{}
+			err := db.Select("user_id").First(&comment, int(idInt)).Error
+			//check if error
+			if err != nil {
+				c.JSON(http.StatusNotFound, gin.H{
+					"error":   "Not Found",
+					"message": "Data doesn't exist",
+				})
+				c.Abort()
+				return
+			}
+			//check if user id not equal with user id from token
+			if comment.UserID != userID {
+				c.JSON(http.StatusForbidden, gin.H{
+					"error":   "Forbidden",
+					"message": "You are not allowed to access this resource",
+				})
+				c.Abort()
+				return
+			}
+		case "/socialmedias":
+			//get sosmed by id
+			social := sosmed.Sosmed{}
+			err := db.Select("user_id").First(&social, int(idInt)).Error
+			//check if error
+			if err != nil {
+				c.JSON(http.StatusNotFound, gin.H{
+					"error":   "Not Found",
+					"message": "Data doesn't exist",
+				})
+				c.Abort()
+				return
+			}
+			//check if user id not equal with user id from token
+			if social.UserID != userID {
+				c.JSON(http.StatusForbidden, gin.H{
+					"error":   "Forbidden",
+					"message": "You are not allowed to access this resource",
+				})
+				c.Abort()
+				return
+			}
 		}
-		currentUser := c.MustGet("currentUser").(user.User)
-		userID := int(currentUser.ID)
-		photo := photo.Photo{}
-
-		err = db.Select("user_id").First(&photo, int(photoId)).Error
-		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{
-				"error":   "Data Not Found",
-				"message": "Data doesn't exist",
-			})
-			return
-		}
-
-		if photo.UserID != userID {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"error":   "Unauthorized",
-				"message": "You are not allowed to access this data",
-			})
-			return
-		}
-
-		c.Next()
-	}
-}
-
-func CommentAuthorization() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		db := config.StartDB()
-		commentId, err := strconv.Atoi(c.Param("commentId"))
-		if err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-				"error":   "Bad Request",
-				"message": "Invalid parameter",
-			})
-		}
-		currentUser := c.MustGet("currentUser").(user.User)
-		userID := int(currentUser.ID)
-		comment := comment.Comment{}
-
-		err = db.Select("user_id").First(&comment, int(commentId)).Error
-		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{
-				"error":   "Data Not Found",
-				"message": "Data doesn't exist",
-			})
-			return
-		}
-
-		if comment.UserID != userID {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"error":   "Unauthorized",
-				"message": "You are not allowed to access this data",
-			})
-			return
-		}
-
-		c.Next()
-	}
-}
-func SocialMediaAuthorization() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		db := config.StartDB()
-		socialMediaId, err := strconv.Atoi(c.Param("socialMediaId"))
-		if err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-				"error":   "Bad Request",
-				"message": "Invalid parameter",
-			})
-		}
-		currentUser := c.MustGet("currentUser").(user.User)
-		userID := int(currentUser.ID)
-		social := sosmed.Sosmed{}
-
-		err = db.Select("user_id").First(&social, int(socialMediaId)).Error
-		if err != nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{
-				"error":   "Data Not Found",
-				"message": "Data doesn't exist",
-			})
-			return
-		}
-
-		if social.UserID != userID {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"error":   "Unauthorized",
-				"message": "You are not allowed to access this data",
-			})
-			return
-		}
-
-		c.Next()
 	}
 }

@@ -73,7 +73,7 @@ func (h *commentHandler) UpdateComment(c *gin.Context) {
 	}
 
 	// get id comment
-	id, _ := strconv.Atoi(c.Param("commentId"))
+	id, _ := strconv.Atoi(c.Param("id"))
 
 	// get current user
 	currentUser := c.MustGet("currentUser").(user.User)
@@ -94,7 +94,7 @@ func (h *commentHandler) UpdateComment(c *gin.Context) {
 
 func (h *commentHandler) DeleteComment(c *gin.Context) {
 	// get id comment
-	id, _ := strconv.Atoi(c.Param("commentId"))
+	id, _ := strconv.Atoi(c.Param("id"))
 
 	_, errMessage := h.commentService.DeleteComment(id)
 

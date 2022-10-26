@@ -1,11 +1,12 @@
 package sosmed
 
+import "errors"
+
 type Service interface {
 	SaveSosmed(ID int, input SosmedInput) (Sosmed, error)
 	FindAllSosmed() ([]Sosmed, error)
 	UpdateSosmed(ID int, input SosmedInput) (Sosmed, error)
 	DeleteSosmed(ID int) (Sosmed, error)
-	FindSosmedByID(ID int) (Sosmed, error)
 }
 
 type service struct {
@@ -45,6 +46,10 @@ func (s *service) UpdateSosmed(ID int, input SosmedInput) (Sosmed, error) {
 		return sosmed, err
 	}
 
+	if sosmed.UserID != input.User.ID {
+		return sosmed, errors.New("Not an owner of the user")
+	}
+
 	sosmed.Name = input.Name
 	sosmed.SocialMediaUrl = input.SociallMediaUrl
 
@@ -67,12 +72,4 @@ func (s *service) DeleteSosmed(ID int) (Sosmed, error) {
 		return deleteSosmed, err
 	}
 	return deleteSosmed, nil
-}
-
-func (s *service) FindSosmedByID(ID int) (Sosmed, error) {
-	sosmed, err := s.repository.FindByID(ID)
-	if err != nil {
-		return sosmed, err
-	}
-	return sosmed, nil
 }
