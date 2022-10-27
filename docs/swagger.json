@@ -15,7 +15,6 @@
         },
         "version": "1.0"
     },
-    "basePath": "/",
     "paths": {
         "/users": {
             "put": {
@@ -163,10 +162,12 @@
             "type": "object",
             "properties": {
                 "error": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "error"
                 },
                 "message": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "message"
                 }
             }
         },

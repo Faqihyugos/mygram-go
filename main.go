@@ -12,10 +12,10 @@ import (
 // @contact.name  Faqih Yugos
 // @contact.url   http://www.swagger.io/support
 // @contact.email faqihyugos@gmail.com
+// @BasePath       /
 
 // @license.name Apache 2.0
 // @license.url  http://www.apache.org/licenses/LICENSE-2.0.html
-// @BasePath /
 
 // @securityDefinitions.apikey  Bearer
 // @in                          header

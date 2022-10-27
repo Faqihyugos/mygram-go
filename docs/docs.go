@@ -171,10 +171,12 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "error": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "error"
                 },
                 "message": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "message"
                 }
             }
         },
@@ -261,7 +263,7 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "",
-	BasePath:         "/",
+	BasePath:         "",
 	Schemes:          []string{},
 	Title:            "Mygram Golang",
 	Description:      "Final Project FGA Golang MyGram, Go Programming Language",

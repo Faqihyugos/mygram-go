@@ -1,10 +1,11 @@
-basePath: /
 definitions:
   helper.ApiError:
     properties:
       error:
+        example: error
         type: string
       message:
+        example: message
         type: string
     type: object
   user.RegisterUserInput:
